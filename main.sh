@@ -58,6 +58,29 @@ rotate_logs
 log_msg "Audit tool started"
 
 
+# --- Banner ---
+# Prints the tool header shown once when the menu loads.
+print_banner() {
+    clear
+    echo -e "${CYAN}${BOLD}"
+    echo "  ╔══════════════════════════════════════════════════════════════╗"
+    echo "  ║                                                              ║"
+    echo "  ║        ███████╗██╗   ██╗███████╗ █████╗ ██╗   ██╗██████╗   ║"
+    echo "  ║        ██╔════╝╚██╗ ██╔╝██╔════╝██╔══██╗██║   ██║██╔══██╗  ║"
+    echo "  ║        ███████╗ ╚████╔╝ ███████╗███████║██║   ██║██║  ██║  ║"
+    echo "  ║        ╚════██║  ╚██╔╝  ╚════██║██╔══██║██║   ██║██║  ██║  ║"
+    echo "  ║        ███████║   ██║   ███████║██║  ██║╚██████╔╝██████╔╝  ║"
+    echo "  ║        ╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝   ║"
+    echo "  ║                                                              ║"
+    echo -e "  ║         ${YELLOW}Linux System Audit Tool  —  v1.0${CYAN}${BOLD}                    ║"
+    echo -e "  ║         ${NC}National School of Cyber Security${CYAN}${BOLD}                  ║"
+    echo "  ║                                                              ║"
+    echo -e "  ║  $(date +'  %A, %d %B %Y   |   %H:%M:%S')                          ║"
+    echo "  ╚══════════════════════════════════════════════════════════════╝"
+    echo -e "${NC}"
+}
+
+
 # --- Cron Setup Helper ---
 # This function is called when the user picks option 6 from the menu.
 # It creates a wrapper script and registers it in the system's crontab
@@ -133,95 +156,120 @@ fi
 
 
 # --- Interactive Menu ---
-# This loop shows the menu and waits for the user to pick an option.
-# 'select' displays a numbered list; $REPLY holds the number the user typed.
-# The loop restarts after each action so the user can do multiple things.
+# This loop shows the banner + menu and waits for the user to pick an option.
+# The loop restarts after each action so the user can keep using the tool.
 while true; do
+    print_banner
+
+    # Draw the menu box
+    echo -e "  ${CYAN}${BOLD}┌─────────────────────────────────────────────────────────────┐${NC}"
+    echo -e "  ${CYAN}${BOLD}│${NC}                         ${BOLD}MAIN MENU${NC}                         ${CYAN}${BOLD}│${NC}"
+    echo -e "  ${CYAN}${BOLD}├─────────────────────────────────────────────────────────────┤${NC}"
+    echo -e "  ${CYAN}${BOLD}│${NC}  ${GREEN}[1]${NC}  Generate Short Report                                 ${CYAN}${BOLD}│${NC}"
+    echo -e "  ${CYAN}${BOLD}│${NC}  ${GREEN}[2]${NC}  Generate Full Report                                  ${CYAN}${BOLD}│${NC}"
+    echo -e "  ${CYAN}${BOLD}│${NC}  ${BLUE}[3]${NC}  Send Report by Email                                  ${CYAN}${BOLD}│${NC}"
+    echo -e "  ${CYAN}${BOLD}│${NC}  ${BLUE}[4]${NC}  Compare Last Two Reports                              ${CYAN}${BOLD}│${NC}"
+    echo -e "  ${CYAN}${BOLD}│${NC}  ${YELLOW}[5]${NC}  Verify Report Integrity  (Hash Check)                ${CYAN}${BOLD}│${NC}"
+    echo -e "  ${CYAN}${BOLD}│${NC}  ${YELLOW}[6]${NC}  Setup Cron Job  (Auto-Schedule)                      ${CYAN}${BOLD}│${NC}"
+    echo -e "  ${CYAN}${BOLD}│${NC}  ${CYAN}[7]${NC}  Run Remote Audit                                      ${CYAN}${BOLD}│${NC}"
+    echo -e "  ${CYAN}${BOLD}│${NC}  ${RED}[8]${NC}  Exit                                                  ${CYAN}${BOLD}│${NC}"
+    echo -e "  ${CYAN}${BOLD}└─────────────────────────────────────────────────────────────┘${NC}"
     echo ""
-    print_section "LINUX SYSTEM AUDIT TOOL"
-    PS3="$(echo -e "\n${CYAN}Choose an option: ${NC}")"
-    options=(
-        "Generate Short Report"             # Option 1 — quick summary report
-        "Generate Full Report"              # Option 2 — full hardware + software report
-        "Send Report by Email"              # Option 3 — email a report to someone
-        "Compare Last Two Reports"          # Option 4 — diff two reports to see changes
-        "Verify Report Integrity (Hash Check)"  # Option 5 — check if a report was modified
-        "Setup Cron Job (Auto-Schedule)"    # Option 6 — schedule daily auto-reports
-        "Run Remote Audit"                  # Option 7 — audit another machine over SSH
-        "Exit"                              # Option 8 — quit the tool
-    )
+    echo -ne "  ${CYAN}${BOLD}>>  Enter your choice [1-8]: ${NC}"
+    read -r REPLY
 
-    select choice in "${options[@]}"; do
-        case "$REPLY" in
-            1)  # Short report: quick overview of the most important system info
-                generate_short
-                log_msg "Short report generated in $REPORT_DIR"
-                break
-                ;;
-            2)  # Full report: everything — hardware, software, processes, ports
-                generate_full
-                generate_hash "$FULL_REPORT"   # Always hash the full report
-                log_msg "Full report generated in $REPORT_DIR"
-                break
-                ;;
-            3)  # Send a report by email
-                # Let the user override the default email address
-                read -r -p "Recipient Email [default: mohamednessissen07@gmail.com]: " user_email
-                if [ -n "$user_email" ]; then
-                    export AUDIT_EMAIL="$user_email"
-                else
-                    export AUDIT_EMAIL="mohamednessissen07@gmail.com"
+    case "$REPLY" in
+        1)  # Short report: quick overview of the most important system info
+            echo ""
+            generate_short
+            log_msg "Short report generated in $REPORT_DIR"
+            echo ""
+            echo -ne "  ${CYAN}Press Enter to return to menu...${NC}"
+            read -r
+            ;;
+        2)  # Full report: everything — hardware, software, processes, ports
+            echo ""
+            generate_full
+            generate_hash "$FULL_REPORT"   # Always hash the full report
+            log_msg "Full report generated in $REPORT_DIR"
+            echo ""
+            echo -ne "  ${CYAN}Press Enter to return to menu...${NC}"
+            read -r
+            ;;
+        3)  # Send a report by email — let the user override the default address
+            echo ""
+            read -r -p "  Recipient Email [default: mohamednessissen07@gmail.com]: " user_email
+            if [ -n "$user_email" ]; then
+                export AUDIT_EMAIL="$user_email"
+            else
+                export AUDIT_EMAIL="mohamednessissen07@gmail.com"
+            fi
+
+            # Ask whether to send short or full report
+            read -r -p "  Send [S]hort or [F]ull report? (s/f) [default: f]: " report_choice
+            send_target=""
+
+            if [[ "$report_choice" =~ ^[Ss]$ ]]; then
+                # If short report was never generated this session, generate it now
+                if [ -z "$SHORT_REPORT" ] || [ ! -f "$SHORT_REPORT" ]; then
+                    print_info "Short report not found. Generating now..."
+                    generate_short
                 fi
-
-                # Ask whether to send short or full report
-                read -r -p "Send [S]hort or [F]ull report? (s/f) [default: f]: " report_choice
-                send_target=""
-
-                if [[ "$report_choice" =~ ^[Ss]$ ]]; then
-                    # If short report was never generated this session, generate it now
-                    if [ -z "$SHORT_REPORT" ] || [ ! -f "$SHORT_REPORT" ]; then
-                        print_info "Short report not found. Generating now..."
-                        generate_short
-                    fi
-                    send_target="$SHORT_REPORT"
-                else
-                    # Default: send full report; generate it first if needed
-                    if [ -z "$FULL_REPORT" ] || [ ! -f "$FULL_REPORT" ]; then
-                        print_info "Full report not found. Generating now..."
-                        generate_full
-                    fi
-                    send_target="$FULL_REPORT"
+                send_target="$SHORT_REPORT"
+            else
+                # Default: send full report; generate it first if needed
+                if [ -z "$FULL_REPORT" ] || [ ! -f "$FULL_REPORT" ]; then
+                    print_info "Full report not found. Generating now..."
+                    generate_full
                 fi
+                send_target="$FULL_REPORT"
+            fi
 
-                send_email "$send_target"
-                break
-                ;;
-            4)  # Compare two reports: shows what changed between them
-                compare_reports
-                log_msg "Report comparison performed"
-                break
-                ;;
-            5)  # Verify a report's hash to detect tampering
-                verify_hash
-                log_msg "Report integrity check performed"
-                break
-                ;;
-            6)  # Schedule the audit to run automatically at 4:00 AM
-                setup_cron
-                break
-                ;;
-            7)  # SSH into a remote machine, run the audit there, and download the results
-                run_remote_audit
-                break
-                ;;
-            8)  # Exit the tool cleanly
-                print_warning "Exiting. Goodbye!"
-                log_msg "Audit tool exited"
-                exit 0
-                ;;
-            *)  # Catch invalid input
-                print_error "Invalid option '$REPLY'. Please choose 1-${#options[@]}."
-                ;;
-        esac
-    done
+            send_email "$send_target"
+            echo ""
+            echo -ne "  ${CYAN}Press Enter to return to menu...${NC}"
+            read -r
+            ;;
+        4)  # Compare two reports: shows what changed between them
+            echo ""
+            compare_reports
+            log_msg "Report comparison performed"
+            echo ""
+            echo -ne "  ${CYAN}Press Enter to return to menu...${NC}"
+            read -r
+            ;;
+        5)  # Verify a report's hash to detect tampering
+            echo ""
+            verify_hash
+            log_msg "Report integrity check performed"
+            echo ""
+            echo -ne "  ${CYAN}Press Enter to return to menu...${NC}"
+            read -r
+            ;;
+        6)  # Schedule the audit to run automatically at 4:00 AM
+            echo ""
+            setup_cron
+            echo ""
+            echo -ne "  ${CYAN}Press Enter to return to menu...${NC}"
+            read -r
+            ;;
+        7)  # SSH into a remote machine, run the audit there, and download the results
+            echo ""
+            run_remote_audit
+            echo ""
+            echo -ne "  ${CYAN}Press Enter to return to menu...${NC}"
+            read -r
+            ;;
+        8)  # Exit the tool cleanly
+            echo ""
+            echo -e "  ${GREEN}${BOLD}Goodbye! Audit session ended.${NC}"
+            echo ""
+            log_msg "Audit tool exited"
+            exit 0
+            ;;
+        *)  # Catch invalid input
+            print_error "Invalid option '$REPLY'. Please enter a number between 1 and 8."
+            sleep 1
+            ;;
+    esac
 done
