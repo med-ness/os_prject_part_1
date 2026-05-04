@@ -1,4 +1,4 @@
-# 🛡️ Linux System Audit Tool — SysAudit
+#  Linux System Audit Tool — SysAudit
 
 > **Mini-Project – Part N°1**
 > Design and Implementation of an Automated Hardware & Software Audit System with Reporting and Remote Monitoring Capabilities
@@ -7,7 +7,7 @@
 
 ---
 
-## 📋 Table of Contents
+##  Table of Contents
 
 - [Overview](#-overview)
 - [Project Structure](#-project-structure)
@@ -22,21 +22,21 @@
 
 ---
 
-## 🔍 Overview
+## Overview
 
 **SysAudit** is a modular Bash-based tool that collects detailed hardware and software information from a Linux system and generates audit reports in four formats: **TXT**, **HTML**, **JSON**, and **PDF**.
 
 Key features:
-- 📊 Short & Full system audit reports
-- 📧 Email delivery of reports
-- 🔒 Report integrity verification via SHA-256 hashing
-- 📂 Report comparison (diff) between two audit runs
-- ⏰ Automated daily scheduling via cron
-- 🌐 Remote auditing of other machines over SSH
+-  Short & Full system audit reports
+-  Email delivery of reports
+-  Report integrity verification via SHA-256 hashing
+-  Report comparison (diff) between two audit runs
+-  Automated daily scheduling via cron
+-  Remote auditing of other machines over SSH
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 os project/
@@ -59,7 +59,7 @@ os project/
 
 ---
 
-## ✅ Requirements
+##  Requirements
 
 ### Required (core functionality)
 
@@ -94,7 +94,7 @@ os project/
 
 ---
 
-## ⚙️ Installation
+##  Installation
 
 ### 1. Clone or Copy the Project
 
@@ -139,7 +139,7 @@ sudo apt install mailutils
 
 ---
 
-## 🔧 Configuration
+##  Configuration
 
 ### Email Address
 
@@ -198,7 +198,7 @@ Logs are saved to: `<project-folder>/logs/audit.log`
 
 ---
 
-## ▶️ How to Run the Script
+##  How to Run the Script
 
 ### Interactive Mode (Recommended)
 
@@ -235,7 +235,7 @@ bash ~/Desktop/os\ project/main.sh
 
 ---
 
-## 📌 Menu Options
+##  Menu Options
 
 When you run the tool interactively, you'll see this menu:
 
@@ -265,7 +265,7 @@ When you run the tool interactively, you'll see this menu:
 
 ---
 
-## 📂 Output / Reports
+##  Output / Reports
 
 All reports are saved under `<project-folder>/reports/`:
 
@@ -283,7 +283,7 @@ reports/
 
 ---
 
-## ⏰ Automated Scheduling (Cron)
+##  Automated Scheduling (Cron)
 
 ### Setup via Menu (Recommended)
 
